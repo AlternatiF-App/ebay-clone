@@ -2,7 +2,8 @@
 
 import { BiLoader } from "react-icons/bi"
 import Product from "./Product"
-import { useEffect, useState } from "react"
+// import { useEffect, useState } from "react"
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
 
 interface ProductsProps {
   id: number
@@ -12,9 +13,19 @@ interface ProductsProps {
   price: number
 }
 
+const queryClient = new QueryClient()
+
+const SimilarProductQuery = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <SimilarProduct />
+    </QueryClientProvider>
+  )
+}
+
 const SimilarProduct = () => {
 
-  const [products, setProducts] = useState([])
+  // const [products, setProducts] = useState([])
 
   const getRandomProducts = async () => {
     try {
@@ -22,18 +33,23 @@ const SimilarProduct = () => {
       const results = await response.json()
 
       if (results) {
-        setProducts(results)
-        return
+        // setProducts(results)
+        return results
       }
 
-      setProducts([])
+      // setProducts([])
     } catch (error) {
       console.log(error)
       alert(error)
     }
   }
 
-  useEffect(() => { getRandomProducts() }, [])
+  const { data } = useQuery<any>({
+    queryKey: ['stream-products'],
+    queryFn: () => getRandomProducts()
+  })
+
+  // useEffect(() => { getRandomProducts() }, [])
 
   return (
     <div>
@@ -43,10 +59,10 @@ const SimilarProduct = () => {
         <div className='font-bold text-2xl py-2 mt-4'>Similar sponsored  items</div>
         
         {
-          products.length > 0
+          data?.length > 0
             ? <div className='grid grid-cols-5 gap-4'>
                 {
-                  products.map((product: ProductsProps) => (
+                  data?.map((product: ProductsProps) => (
                     <Product key={product.id} product={product} />
                   ))
                 }
@@ -63,4 +79,4 @@ const SimilarProduct = () => {
   )
 }
 
-export default SimilarProduct
+export default SimilarProductQuery

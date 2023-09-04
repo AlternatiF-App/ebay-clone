@@ -4,28 +4,45 @@ import SimilarProduct from "@/app/components/SimilarProducts"
 import MainLayout from "@/app/layouts/MainLayout"
 import { useCart } from '@/app/context/cart'
 import { toast } from "react-toastify"
-import { useEffect, useState } from "react"
+// import { useEffect, useState } from "react"
 import UseIsLoading from "@/app/hooks/useIsLoading"
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
+
+const queryClient = new QueryClient()
+
+const ProductQuery = ({ params }:any) => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Product params={params} />
+    </QueryClientProvider>
+  )
+}
 
 const Product = ({ params }:any) => {
 
   const cart = useCart()
-  const [product, setProduct] = useState<any>({})
+  // const [product, setProduct] = useState<any>({})
 
   const getProduct = async () => {
     UseIsLoading(true)
-    setProduct({})
+    // setProduct({})
 
     const response = await fetch(`/api/product/${params.id}`)
     const prod = await response.json()
-    setProduct(prod)
+    // setProduct(prod)
     cart.isItemAddedToCart(prod)
     UseIsLoading(false)
+    return prod
   }
 
-  useEffect(() => {
-    getProduct()
-  }, [])
+  const { data } = useQuery({
+    queryKey: ['stream-product'],
+    queryFn: () => getProduct()
+  })
+
+  // useEffect(() => {
+  //   getProduct()
+  // }, [])
 
   return (
     <MainLayout>
@@ -33,13 +50,13 @@ const Product = ({ params }:any) => {
         <div className='max-w-[1200px] mx-auto'>
           <div className='flex  px-4 py-10'>
             {
-              product?.url
-                ? <img className='w-[40%] rounded-lg' src={product?.url+'/200'} />
+              data?.url
+                ? <img className='w-[40%] rounded-lg' src={data?.url+'/200'} />
                 : <div className='w-[40%]' />
             }
 
             <div className='px-4 w-full'>
-              <div className='font-bold text-xl'>{ product.title }</div>
+              <div className='font-bold text-xl'>{ data?.title }</div>
               <div className='text-sm text-gray-700 pt-2'>Brand New - Full Waranty</div>
 
               <div className='border-b py-1'/>
@@ -57,9 +74,9 @@ const Product = ({ params }:any) => {
                   <div className='flex items-center'>
                     Price:
                     {
-                      product.price
+                      data?.price
                         ? <div className='font-bold text-[20px] ml-2'>
-                            GBP £{ (product.price / 100).toFixed(2) }
+                            GBP £{ (data?.price / 100).toFixed(2) }
                           </div>
                         : null
                     }
@@ -68,10 +85,10 @@ const Product = ({ params }:any) => {
                   <button
                     onClick={() => {
                       if (cart.isItemAdded) {
-                        cart.removeFromCart(product)
+                        cart.removeFromCart(data)
                         toast.info('Removed from cart', { autoClose: 3000 })
                       } else {
-                        cart.addToCart(product)
+                        cart.addToCart(data)
                         toast.success('Added to cart', { autoClose: 3000 })
                       }
                     }} 
@@ -89,7 +106,7 @@ const Product = ({ params }:any) => {
 
               <div className='pt-3'>
                 <div className='font-semibold pb-1'>Description:</div>
-                <div className='text-sm'>{ product.description }</div>
+                <div className='text-sm'>{ data?.description }</div>
               </div>
             </div>
           </div>
@@ -101,4 +118,4 @@ const Product = ({ params }:any) => {
   )
 }
 
-export default Product
+export default ProductQuery
