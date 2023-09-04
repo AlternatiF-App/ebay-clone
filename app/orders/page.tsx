@@ -8,28 +8,45 @@ import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import UseIsLoading from '../hooks/useIsLoading'
 import moment from 'moment'
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
+
+const queryClient = new QueryClient()
+
+const OrdersQuery = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Orders />
+    </QueryClientProvider>
+  )
+}
 
 const Orders = () => {
 
   const { user } = useUser()
-  const [orders, setOrders] = useState<any>([])
+  // const [orders, setOrders] = useState<any>([])
 
   const getOrders = async () => {
     try {
       if (!user && !user?.id) return
       const response = await fetch('/api/orders')
       const results = await response.json()
-      setOrders(results)
+      // setOrders(results)
       UseIsLoading(false)
+      return results
     } catch (error) {
       toast.error('Something went wrong?', { autoClose: 3000 })
       UseIsLoading(false)
     }
   }
 
+  const { data } = useQuery<any>({
+    queryKey: ['stream-orders'],
+    queryFn: () => getOrders()
+  })
+
   useEffect(() => {
     UseIsLoading(true)
-    getOrders()
+    // getOrders()
   }, [user])
 
   return (
@@ -42,7 +59,7 @@ const Orders = () => {
           </div>
 
           {
-            orders.length < 1
+            data?.length < 1
               ? <div className='flex items-center justify-center'>
                   You have no order history
                 </div>
@@ -50,7 +67,7 @@ const Orders = () => {
           }
 
           {
-            orders.map((order: any) => (
+            data?.map((order: any) => (
               <div key={order.id} className='text-sm pl-[50px]'>
                 <div className='border-p py-1'>
                   <div className='pt-2'>
@@ -95,4 +112,4 @@ const Orders = () => {
   )
 }
 
-export default Orders
+export default OrdersQuery

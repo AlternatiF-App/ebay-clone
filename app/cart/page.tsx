@@ -26,7 +26,7 @@ const Cart = () => {
       alert('You don`t have any cart items in the cart.')
       return
     }
-    router.push('/checkout ')
+    router.push('/checkout')
   }
 
   return (

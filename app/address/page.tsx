@@ -11,6 +11,17 @@ import UseUserAddress from '../hooks/useUserAddress'
 import { toast } from 'react-toastify'
 import ClientOnly from '../components/ClientOnly'
 import { AiOutlineLoading3Quarters } from 'react-icons/ai'
+import { QueryClient, QueryClientProvider, useMutation } from '@tanstack/react-query'
+
+const queryClient = new QueryClient()
+
+const AddressQuery = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Address />
+    </QueryClientProvider>
+  )
+}
 
 const Address = () => {
   const router = useRouter()
@@ -107,7 +118,8 @@ const Address = () => {
         country 
       })
 
-      setTheCurrentAddress(response)
+      // setTheCurrentAddress(response)
+      mutation.mutate(response)
       setIsUpdatingAddress(false)
 
       toast.success('Address updated!', { autoClose: 3000 })
@@ -120,13 +132,29 @@ const Address = () => {
     }
   }
 
+  const mutation = useMutation({
+    mutationFn: UseCreateAddress
+  })
+
   return (
     <MainLayout>
       <div id='address-page' className='mt-4 max-w-[600px] mx-auto px-2'>
         <div className='mx-auto bg-white rounded-lg p-3'>
           <div className='text-xl font-bold mb-2'>Address Details</div>
 
-          <form onSubmit={submit }>
+          <form 
+            onSubmit={submit}
+            // onSubmit={() => {
+            //   mutation.mutate({
+            //     addressId: addressId, 
+            //     name: name, 
+            //     address: address, 
+            //     zipcode: zipcode, 
+            //     city: city, 
+            //     country: country 
+            //   })
+            // }}
+          >
             <div className='mb-4'>
               <ClientOnly>
                 <TextInput
@@ -184,7 +212,7 @@ const Address = () => {
 
             <button
               type='submit'
-              disabled={isUpdatingAddress }
+              disabled={isUpdatingAddress}
               className={`mt-6 w-full text-white text-lg font-semibold p-3 rounded ${isUpdatingAddress ? 'bg-blue-800' : 'bg-blue-600'}`}>
                 {
                   !isUpdatingAddress
@@ -202,4 +230,4 @@ const Address = () => {
   )
 }
 
-export default Address
+export default AddressQuery

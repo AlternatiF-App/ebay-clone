@@ -50,6 +50,7 @@ model Products {
   description String
   url         String
   price       Int
+  category    String
   created_at  DateTime?  @default(now()) @db.Timestamptz(6)
   orderItem   OrderItem[]
 }
