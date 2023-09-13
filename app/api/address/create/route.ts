@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 
-export const POST = async (req: any) => {
+const POST = async (req: any) => {
     const supabase = createServerComponentClient({ cookies })
 
     try {
@@ -31,3 +31,5 @@ export const POST = async (req: any) => {
         return new NextResponse('Something went wrong', { status: 400 });
     }
 }
+
+export default POST

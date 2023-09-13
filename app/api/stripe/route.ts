@@ -28,3 +28,5 @@ export const POST = async (req: any) => {
     return new NextResponse('Something went wrong', { status: 400 });
   }
 }
+
+export default POST
