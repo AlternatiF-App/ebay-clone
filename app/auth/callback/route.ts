@@ -14,5 +14,3 @@ export const GET = async (request: any) => {
 
   return NextResponse.redirect(requestUrl.origin)
 }
-
-export default GET
