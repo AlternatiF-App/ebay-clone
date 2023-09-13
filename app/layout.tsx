@@ -10,8 +10,8 @@ interface Metadata {
 }
 
 export const metadata: Metadata = {
-  title: 'eBay Clone',
-  description: 'eBay Clone',
+  title: 'Electronics, Cars, Fashion, Collectibles & More | eBay',
+  description: 'Buy & sell electronics, cars, clothes, collectibles & more on eBay, the world`s online marketplace. Top brands, low prices & free shipping on many items.'
 }
 
 export default function RootLayout({
