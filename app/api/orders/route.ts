@@ -33,5 +33,3 @@ export const GET = async () => {
         return new NextResponse('Something went wrong', { status: 400 });
     }
 }
-
-export default GET
