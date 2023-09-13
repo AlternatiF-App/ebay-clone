@@ -8,6 +8,7 @@ import { useCart } from '@/app/context/cart'
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import ClientOnly from "@/app/components/ClientOnly"
+import Image from "next/image"
 
 const TopMenu = () => {
   const router = useRouter()
@@ -52,8 +53,8 @@ const TopMenu = () => {
                 ${isMenu ? 'visible' : 'hidden'}
               `}
             >
-              <div className='flex items-center justify-start gap-1 p-3'>
-                <img src={user?.picture} width={50} />
+              <div className='flex items-center justify-start gap-2 p-3'>
+                <Image src={user?.picture === null ? '' : user?.picture} alt='Profile Image' width={30} height={30} />
                 <div className='font-bold text-[13px] capitalize'>
                   { user?.name }
                 </div>
